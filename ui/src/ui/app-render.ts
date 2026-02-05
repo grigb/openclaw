@@ -188,7 +188,19 @@ export function renderApp(state: AppViewState) {
       <main class="content ${isChat ? "content--chat" : ""}">
         <section class="content-header">
           <div>
-            ${state.tab === "usage" ? nothing : html`<div class="page-title">${titleForTab(state.tab)}</div>`}
+            ${state.tab === "usage" ? nothing : html`<div class="page-title">${titleForTab(state.tab)}${
+              isChat
+                ? (() => {
+                    const activeSession = state.sessionsResult?.sessions?.find(
+                      (s) => s.key === state.sessionKey,
+                    );
+                    const model = activeSession?.model;
+                    return model
+                      ? html`<span class="pill" style="margin-left: 8px; font-size: 0.75em;">${model}</span>`
+                      : nothing;
+                  })()
+                : nothing
+            }</div>`}
             ${state.tab === "usage" ? nothing : html`<div class="page-sub">${subtitleForTab(state.tab)}</div>`}
           </div>
           <div class="page-meta">

@@ -193,6 +193,7 @@ export function renderSessions(props: SessionsProps) {
           <div>Key</div>
           <div>Label</div>
           <div>Kind</div>
+          <div>Model</div>
           <div>Updated</div>
           <div>Tokens</div>
           <div>Thinking</div>
@@ -259,6 +260,7 @@ function renderRow(
         />
       </div>
       <div>${row.kind}</div>
+      <div class="mono">${row.model || "—"}</div>
       <div>${updated}</div>
       <div>${formatSessionTokens(row)}</div>
       <div>
