@@ -85,6 +85,11 @@ type CreateMemoryGetTool = typeof import("../../agents/tools/memory-tool.js").cr
 type CreateMemorySearchTool =
   typeof import("../../agents/tools/memory-tool.js").createMemorySearchTool;
 type RegisterMemoryCli = typeof import("../../cli/memory-cli.js").registerMemoryCli;
+type CreateMemorySessionHooks =
+  typeof import("../../memory/session-hooks.js").createMemorySessionHooks;
+type ShouldEnableMemoryHooks =
+  typeof import("../../memory/session-hooks.js").shouldEnableMemoryHooks;
+type GetMemoryState = typeof import("../../memory/integration.js").getMemoryState;
 type DiscordMessageActions =
   typeof import("../../channels/plugins/actions/discord.js").discordMessageActions;
 type AuditDiscordChannelPermissions =
@@ -201,6 +206,11 @@ export type PluginRuntime = {
     createMemoryGetTool: CreateMemoryGetTool;
     createMemorySearchTool: CreateMemorySearchTool;
     registerMemoryCli: RegisterMemoryCli;
+  };
+  memory: {
+    createSessionHooks: CreateMemorySessionHooks;
+    shouldEnableHooks: ShouldEnableMemoryHooks;
+    getState: GetMemoryState;
   };
   channel: {
     text: {

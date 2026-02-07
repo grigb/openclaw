@@ -12,6 +12,7 @@ import {
   SessionSchema,
   SessionSendPolicySchema,
 } from "./zod-schema.session.js";
+import { MemoryConfigSchema } from "../memory/config-schema.js";
 
 const BrowserSnapshotDefaultsSchema = z
   .object({
@@ -611,6 +612,7 @@ export const OpenClawSchema = z
       })
       .strict()
       .optional(),
+    memory: MemoryConfigSchema,
   })
   .strict()
   .superRefine((cfg, ctx) => {

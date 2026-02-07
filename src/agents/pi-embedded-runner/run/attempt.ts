@@ -563,6 +563,25 @@ export async function runEmbeddedAttempt(
         throw new Error("Embedded agent session missing");
       }
       const activeSession = session;
+      
+      // Run session_start hook to allow plugins to track session lifecycle
+      const sessionStartHookRunner = getGlobalHookRunner();
+      if (sessionStartHookRunner?.hasHooks("session_start")) {
+        try {
+          await sessionStartHookRunner.runSessionStart(
+            {
+              sessionId: activeSession.sessionId,
+              resumedFrom: hadSessionFile ? activeSession.sessionId : undefined,
+            },
+            {
+              agentId: params.sessionKey?.split(":")[0] ?? "main",
+              sessionId: activeSession.sessionId,
+            },
+          );
+        } catch (hookErr) {
+          log.warn(`session_start hook failed: ${String(hookErr)}`);
+        }
+      }
       const cacheTrace = createCacheTrace({
         cfg: params.config,
         env: process.env,
@@ -1041,6 +1060,26 @@ export async function runEmbeddedAttempt(
         clientToolCall: clientToolCallDetected ?? undefined,
       };
     } finally {
+      // Run session_end hook before disposing session
+      const endHookRunner = getGlobalHookRunner();
+      if (session && endHookRunner?.hasHooks("session_end")) {
+        try {
+          const messageCount = session.messages?.length ?? 0;
+          await endHookRunner.runSessionEnd(
+            {
+              sessionId: session.sessionId,
+              messageCount,
+            },
+            {
+              agentId: params.sessionKey?.split(":")[0] ?? "main",
+              sessionId: session.sessionId,
+            },
+          );
+        } catch (hookErr) {
+          log.warn(`session_end hook failed: ${String(hookErr)}`);
+        }
+      }
+      
       // Always tear down the session (and release the lock) before we leave this attempt.
       //
       // BUGFIX: Wait for the agent to be truly idle before flushing pending tool results.

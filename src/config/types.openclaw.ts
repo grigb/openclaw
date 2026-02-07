@@ -19,6 +19,7 @@ import type {
   CommandsConfig,
   MessagesConfig,
 } from "./types.messages.js";
+import type { MemoryConfig } from "../memory/config-schema.js";
 import type { ModelsConfig } from "./types.models.js";
 import type { NodeHostConfig } from "./types.node-host.js";
 import type { PluginsConfig } from "./types.plugins.js";
@@ -96,6 +97,7 @@ export type OpenClawConfig = {
   canvasHost?: CanvasHostConfig;
   talk?: TalkConfig;
   gateway?: GatewayConfig;
+  /** Memory Mark One configuration */
   memory?: MemoryConfig;
 };
 

@@ -82,6 +82,7 @@ import {
   refreshGatewayHealthSnapshot,
 } from "./server/health-state.js";
 import { loadGatewayTlsRuntime } from "./server/tls.js";
+import { initializeMemorySubsystem, shutdownMemorySubsystem } from "../memory/integration.js";
 
 export { __resetModelCatalogCacheForTest } from "./server-model-catalog.js";
 
@@ -100,6 +101,7 @@ const logHooks = log.child("hooks");
 const logPlugins = log.child("plugins");
 const logWsControl = log.child("ws");
 const gatewayRuntime = runtimeForLogger(log);
+const logMemory = log.child("memory");
 const canvasRuntime = runtimeForLogger(logCanvas);
 
 export type GatewayServer = {
@@ -231,6 +233,17 @@ export async function startGatewayServer(
   setPreRestartDeferralCheck(
     () => getTotalQueueSize() + getTotalPendingReplies() + getActiveEmbeddedRunCount(),
   );
+
+  // Initialize memory subsystem (non-blocking, graceful degradation if backend unavailable)
+  const memoryInit = await initializeMemorySubsystem(cfgAtStart);
+  if (memoryInit.enabled) {
+    if (memoryInit.available) {
+      logMemory.info("memory subsystem initialized");
+    } else {
+      logMemory.warn(`memory subsystem enabled but backend unavailable: ${memoryInit.error ?? "unknown"}`);
+    }
+  }
+
   initSubagentRegistry();
   const defaultAgentId = resolveDefaultAgentId(cfgAtStart);
   const defaultWorkspaceDir = resolveAgentWorkspaceDir(cfgAtStart, defaultAgentId);
@@ -685,6 +698,8 @@ export async function startGatewayServer(
       }
       skillsChangeUnsub();
       authRateLimiter?.dispose();
+      // Shutdown memory subsystem
+      await shutdownMemorySubsystem();
       await close(opts);
     },
   };
