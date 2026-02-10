@@ -227,6 +227,7 @@ describe.skipIf(!process.env.MEMBRANE_INTEGRATION)("MembraneProvider Integration
     const record = await provider.ingest({
       source: "test-provider",
       eventKind: "provider_test",
+      ref: "test-ref-provider-001",  // Required by Membrane policy
       summary: "Test from provider",
       tags: ["test"],
     });

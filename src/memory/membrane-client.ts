@@ -509,8 +509,10 @@ export class MembraneClient {
     });
 
     // Records come as JSON-encoded bytes
-    const records: MemoryRecord[] = response.records.map((r: Buffer) => JSON.parse(r.toString()));
-    const selection = response.selection ? JSON.parse(response.selection.toString()) : undefined;
+    const records: MemoryRecord[] = (response.records || []).map((r: Buffer) => JSON.parse(r.toString()));
+    // Selection may be empty buffer - only parse if it has content
+    const selectionStr = response.selection?.toString?.() || "";
+    const selection = selectionStr.length > 0 ? JSON.parse(selectionStr) : undefined;
 
     return { records, selection };
   }
