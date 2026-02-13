@@ -3,9 +3,59 @@
  *
  * This schema defines the configuration options for the Memory Mark One
  * integration with OpenClaw.
+ *
+ * ⚠️⚠️⚠️ AGENT WARNING ⚠️⚠️⚠️
+ * DO NOT attempt to add `memory.enabled` - it ALREADY EXISTS with default: true
+ * See: .github/AGENT_WARNINGS.md and .dev/BUILD-FIX-REPORT-2026-02-13.md
+ * Previous attempt to "fix" this broke OpenClaw for hours due to type conflicts.
+ * Memory works by default. DO NOT MODIFY THIS FILE unless you fully understand
+ * the schema and have verified the change is actually needed.
  */
 
 import { z } from "zod";
+
+/**
+ * Legacy QMD configuration schemas (for backward compatibility)
+ */
+const MemoryQmdIndexPathSchema = z.object({
+  path: z.string(),
+  name: z.string().optional(),
+  pattern: z.string().optional(),
+});
+
+const MemoryQmdSessionConfigSchema = z.object({
+  enabled: z.boolean().optional(),
+  exportDir: z.string().optional(),
+  retentionDays: z.number().optional(),
+});
+
+const MemoryQmdUpdateConfigSchema = z.object({
+  interval: z.string().optional(),
+  debounceMs: z.number().optional(),
+  onBoot: z.boolean().optional(),
+  waitForBootSync: z.boolean().optional(),
+  embedInterval: z.string().optional(),
+  commandTimeoutMs: z.number().optional(),
+  updateTimeoutMs: z.number().optional(),
+  embedTimeoutMs: z.number().optional(),
+});
+
+const MemoryQmdLimitsConfigSchema = z.object({
+  maxResults: z.number().optional(),
+  maxSnippetChars: z.number().optional(),
+  maxInjectedChars: z.number().optional(),
+  timeoutMs: z.number().optional(),
+});
+
+const MemoryQmdConfigSchema = z.object({
+  command: z.string().optional(),
+  includeDefaultMemory: z.boolean().optional(),
+  paths: z.array(MemoryQmdIndexPathSchema).optional(),
+  sessions: MemoryQmdSessionConfigSchema.optional(),
+  update: MemoryQmdUpdateConfigSchema.optional(),
+  limits: MemoryQmdLimitsConfigSchema.optional(),
+  scope: z.record(z.string(), z.unknown()).optional(),
+});
 
 /**
  * Sensitivity levels for memory records
@@ -98,14 +148,16 @@ const SessionMemoryConfigSchema = z
 
 /**
  * Full memory configuration schema
+ *
+ * NOTE: enabled defaults to true - memory works without explicit configuration
  */
 export const MemoryConfigSchema = z
   .object({
-    /** Enable memory system */
+    /** Enable memory system - defaults to true */
     enabled: z.boolean().default(true),
 
-    /** Backend type */
-    backend: z.enum(["membrane", "file", "none"]).default("membrane"),
+    /** Backend type - supports both new (membrane/file/none) and legacy (builtin/qmd) */
+    backend: z.enum(["membrane", "file", "none", "builtin", "qmd"]).default("membrane"),
 
     /** Membrane-specific configuration */
     membrane: MembraneConfigSchema.optional(),
@@ -118,6 +170,12 @@ export const MemoryConfigSchema = z
 
     /** Session configuration */
     session: SessionMemoryConfigSchema.optional(),
+
+    // Legacy QMD memory compatibility fields
+    /** @deprecated Use retrieval configuration instead */
+    citations: z.enum(["auto", "on", "off"]).optional(),
+    /** @deprecated QMD configuration for legacy compatibility */
+    qmd: MemoryQmdConfigSchema.optional(),
   })
   .strict()
   .optional();

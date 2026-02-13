@@ -60,8 +60,8 @@ export interface RetrieveResult {
 export interface MemoryProviderConfig {
   /** Whether memory is enabled */
   enabled: boolean;
-  /** Backend type */
-  backend: "membrane" | "file" | "none";
+  /** Backend type - supports new (membrane/file/none) and legacy (builtin/qmd) */
+  backend: "membrane" | "file" | "none" | "builtin" | "qmd";
   /** Membrane-specific configuration */
   membrane?: MembraneClientConfig;
   /** Maximum tokens for retrieved memory context */

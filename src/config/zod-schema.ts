@@ -1,3 +1,8 @@
+/**
+ * ⚠️ AGENT WARNING: Do NOT add inline memory schemas here.
+ * Memory schema is defined in memory/config-schema.ts and imported as MemoryConfigSchema.
+ * See: .github/AGENT_WARNINGS.md
+ */
 import { z } from "zod";
 import { ToolsSchema } from "./zod-schema.agent-runtime.js";
 import { AgentsSchema, AudioSchema, BindingsSchema, BroadcastSchema } from "./zod-schema.agents.js";
@@ -84,15 +89,6 @@ const MemoryQmdSchema = z
     scope: SessionSendPolicySchema.optional(),
   })
   .strict();
-
-const MemorySchema = z
-  .object({
-    backend: z.union([z.literal("builtin"), z.literal("qmd")]).optional(),
-    citations: z.union([z.literal("auto"), z.literal("on"), z.literal("off")]).optional(),
-    qmd: MemoryQmdSchema.optional(),
-  })
-  .strict()
-  .optional();
 
 export const OpenClawSchema = z
   .object({
@@ -529,7 +525,7 @@ export const OpenClawSchema = z
       })
       .strict()
       .optional(),
-    memory: MemorySchema,
+
     skills: z
       .object({
         allowBundled: z.array(z.string()).optional(),

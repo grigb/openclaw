@@ -1,6 +1,33 @@
+/**
+ * ⚠️ AGENT WARNING: Do NOT import from ../infra/json-file.js
+ * These functions are INLINED to prevent bundler circular dependency.
+ * Reverting to imports will break the build. See: .github/AGENT_WARNINGS.md
+ */
+import fs from "node:fs";
 import path from "node:path";
 import { resolveStateDir } from "../config/paths.js";
-import { loadJsonFile, saveJsonFile } from "../infra/json-file.js";
+
+// INLINED from ../infra/json-file.js - DO NOT CHANGE TO IMPORTS
+function loadJsonFile(pathname: string): unknown {
+  try {
+    if (!fs.existsSync(pathname)) {
+      return undefined;
+    }
+    const raw = fs.readFileSync(pathname, "utf8");
+    return JSON.parse(raw) as unknown;
+  } catch {
+    return undefined;
+  }
+}
+
+function saveJsonFile(pathname: string, data: unknown) {
+  const dir = path.dirname(pathname);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true, mode: 0o700 });
+  }
+  fs.writeFileSync(pathname, `${JSON.stringify(data, null, 2)}\n`, "utf8");
+  fs.chmodSync(pathname, 0o600);
+}
 
 const COPILOT_TOKEN_URL = "https://api.github.com/copilot_internal/v2/token";
 

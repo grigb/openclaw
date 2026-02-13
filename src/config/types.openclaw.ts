@@ -1,3 +1,7 @@
+/**
+ * ⚠️ AGENT WARNING: Use memory/config-schema.js for MemoryConfig, NOT types.memory.js
+ * See: .github/AGENT_WARNINGS.md
+ */
 import type { AgentBinding, AgentsConfig } from "./types.agents.js";
 import type { ApprovalsConfig } from "./types.approvals.js";
 import type { AuthConfig } from "./types.auth.js";
@@ -12,7 +16,6 @@ import type {
   TalkConfig,
 } from "./types.gateway.js";
 import type { HooksConfig } from "./types.hooks.js";
-import type { MemoryConfig } from "./types.memory.js";
 import type {
   AudioConfig,
   BroadcastConfig,
