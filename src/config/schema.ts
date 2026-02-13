@@ -388,9 +388,9 @@ const FIELD_LABELS: Record<string, string> = {
   "plugins.installs.*.installPath": "Plugin Install Path",
   "plugins.installs.*.version": "Plugin Install Version",
   "plugins.installs.*.installedAt": "Plugin Install Time",
-  // Memory Mark One
+  // Memory Mark One (extends legacy QMD memory config)
   "memory.enabled": "Enable Memory System",
-  "memory.backend": "Memory Backend",
+  // Note: memory.backend already defined in legacy section above
   "memory.membrane.address": "Membrane Server Address",
   "memory.membrane.connectTimeoutMs": "Membrane Connect Timeout (ms)",
   "memory.membrane.requestTimeoutMs": "Membrane Request Timeout (ms)",
@@ -778,10 +778,9 @@ const FIELD_HELP: Record<string, string> = {
     "Optional PluralKit token for resolving private systems or members.",
   "channels.slack.dm.policy":
     'Direct message access control ("pairing" recommended). "open" requires channels.slack.dm.allowFrom=["*"].',
-  // Memory Mark One
+  // Memory Mark One (extends legacy QMD memory config)
   "memory.enabled": "Enable the Memory Mark One system (Membrane integration).",
-  "memory.backend":
-    'Memory backend type ("membrane" for structured memory, "file" for file-only, "none" to disable).',
+  // Note: memory.backend already defined in legacy section above, supports both builtin/qmd and membrane/file/none
   "memory.membrane.address": "Membrane gRPC server address (default: localhost:19090).",
   "memory.membrane.connectTimeoutMs":
     "Connection timeout in ms for Membrane health checks (default: 5000).",
