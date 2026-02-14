@@ -49,6 +49,7 @@ const MemoryQmdLimitsConfigSchema = z.object({
 
 const MemoryQmdConfigSchema = z.object({
   command: z.string().optional(),
+  searchMode: z.union([z.literal("query"), z.literal("search"), z.literal("vsearch")]).optional(),
   includeDefaultMemory: z.boolean().optional(),
   paths: z.array(MemoryQmdIndexPathSchema).optional(),
   sessions: MemoryQmdSessionConfigSchema.optional(),
